@@ -1,10 +1,10 @@
 [![Crates.io][crates-badge]][crates-url]
 [![docs.rs][docs_rs-badge]][docs_rs-url]
 
-[crates-badge]: https://img.shields.io/crates/v/wstr_literal
-[crates-url]: https://crates.io/crates/wstr_literal
-[docs_rs-badge]: https://docs.rs/wstr_literal/badge.svg
-[docs_rs-url]: https://docs.rs/wstr_literal
+[crates-badge]: https://img.shields.io/crates/v/wstr-literal_impl.svg
+[crates-url]: https://crates.io/crates/wstr-literal_impl
+[docs_rs-badge]: https://img.shields.io/docsrs/wstr-literal_impl.svg
+[docs_rs-url]: https://docs.rs/wstr-literal_impl
 
 This is the procedural macro implementation crate for the `wstr-literal`.
 
