@@ -9,16 +9,18 @@
 [ci-badge]: https://github.com/vabock/wstr-literal/actions/workflows/test.yml/badge.svg?branch=main
 [ci-url]: https://github.com/vabock/wstr-literal/actions?query=branch%3Amain
 
+# wstr-literal
+
 Procedural macros for building UTF-16 null-terminated string arrays for Windows FFI and similar APIs at compile time.
 
 This crate provides two macros:
 
 - [`wstr!`] — a function-like macro that converts a string literal to a UTF-16 array with a trailing null (0u16). Optionally accepts an explicit array length and pads with zeros.
-- #\[[`wstr_literal`]\] — an attribute macro for const or static declaration that transforms a string-literal into a UTF-16 array with a trailing null. Supports either a fixed array length or an inferred length via the `_` placeholder.
+- [`wstr_literal`] — an attribute macro for const or static declaration that transforms a string-literal into a UTF-16 array with a trailing null. Supports either a fixed array length or an inferred length via placeholder(`_`).
 
 Both macros expand at compile time into numeric `[u16; N]` array literals; there is no runtime allocation or conversion.
 
-# Installation
+## Installation
 
 Add this crate to your `Cargo.toml`:
 
@@ -27,7 +29,7 @@ Add this crate to your `Cargo.toml`:
 wstr-literal = "0.1"
 ```
 
-# Examples:
+## Examples
 
 ```rust
 use wstr_literal::{wstr_literal, wstr};
@@ -48,26 +50,23 @@ let slice: &[u16] = &wstr!("Hi");
 assert_eq!(slice, &[0x48, 0x69, 0]);
 
 #[wstr_literal]
-const HELLO_AUTO: [u16; _] = "hello"; // length inferred (5 + 1)
-assert_eq!(HELLO_AUTO.len(), 6);
+const HELLO: [u16; _] = "hello"; // length inferred (5 + 1)
+assert_eq!(HELLO.len(), 6);
 
 #[wstr_literal]
-static EMOJI: [u16; _] = "\u{1F917}"; // 🤗
-assert_eq!(EMOJI.len(), 3);
+static HELLO_PADDED: [u16; 0x10] = "hello"; // padded with zeros to length 0x10
+assert_eq!(&HELLO_PADDED[..6], &[0x68, 0x65, 0x6c, 0x6c, 0x6f, 0]);
+assert_eq!(&HELLO_PADDED[6..], &[0u16; 10]); // padding
 
-#[wstr_literal]
-static HELLO_FIXED: [u16; 0x10] = "hello"; // padded with zeros to length 0x10
-assert_eq!(&HELLO_FIXED[..6], &[0x68, 0x65, 0x6c, 0x6c, 0x6f, 0]);
-assert_eq!(&HELLO_FIXED[6..], &[0u16; 10]); // padding
-
+// supports const/static, visibility, mutability, and other attributes
 #[wstr_literal]
 #[allow(non_upper_case_globals)]
-pub static mut GlobalMut: [u16; _] = "x"; // supports const/static, visibility, mutability, and other attributes
+pub static mut GlobalMut: [u16; _] = "x";
 ```
 
-# Using with [windows-rs](https://crates.io/crates/windows)
+## Using with [windows-rs](https://crates.io/crates/windows)
 
-These arrays are suitable for FFI calls expecting UTF-16 with a trailing null, for example with the windows crate:
+These arrays are suitable for FFI calls expecting UTF-16 with a trailing null, for example with windows crate:
 
 ```rust,ignore
 use wstr_literal::wstr_literal;
@@ -80,6 +79,6 @@ let pcwstr = PCWSTR(APP_NAME.as_ptr());
 // pass `pcwstr` to Windows APIs that expect a wide string
 ```
 
-# Acknowledgments
+## Acknowledgments
 
-This macro was inspired by the [`auto-const-array`](https://crates.io/crates/auto-const-array) crate.
+This macro was inspired by [`auto-const-array`](https://crates.io/crates/auto-const-array) crate.

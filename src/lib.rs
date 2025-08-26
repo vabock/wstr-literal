@@ -7,7 +7,7 @@ use wstr_literal_impl::{wstr_impl, wstr_literal_impl};
 /// # Usage
 ///
 /// - `wstr!("hello")` → `[u16; 6]` array containing UTF-16 code units + null terminator
-/// - `wstr!(10, "hello")` → `[u16; 10]` array, zero-padded to the specified length
+/// - `wstr!(10, "hello")` → `[u16; 10]` array, zero-padded to specified length
 ///
 /// # Examples
 ///
@@ -29,8 +29,8 @@ use wstr_literal_impl::{wstr_impl, wstr_literal_impl};
 ///
 /// ```compile_fail
 /// use wstr_literal::wstr;
-/// let too_small: [u16; 3] = wstr!(3, "hello");
-/// // Error: array size must be at least the length of the input string plus the null terminator
+/// let too_small = wstr!(3, "hello");
+/// // Error: array size must be at least length of input string plus null terminator
 /// ```
 ///
 /// # Requirements
@@ -53,7 +53,7 @@ pub fn wstr(input: TokenStream) -> TokenStream {
 ///
 /// <div class="warning">
 /// This macro only works with const and static declarations. For let bindings,
-/// use the wstr! macro instead.
+/// use wstr! macro instead.
 /// </div>
 ///
 /// # Usage
@@ -96,7 +96,7 @@ pub fn wstr(input: TokenStream) -> TokenStream {
 ///
 /// - Target must be a `const` or `static` declaration
 /// - Type must be `[u16; SIZE]` where `SIZE` is either `_` or a integer literal
-/// - The initial value must be a string literal
+/// - The initial value must be a string literal (not a variable or expression)
 /// - If fixed size is specified, it must be at least string length + 1(for null terminator)
 ///
 #[proc_macro_attribute]

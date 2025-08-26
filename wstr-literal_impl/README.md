@@ -9,9 +9,11 @@
 [ci-badge]: https://github.com/vabock/wstr-literal/actions/workflows/test.yml/badge.svg?branch=main
 [ci-url]: https://github.com/vabock/wstr-literal/actions?query=branch%3Amain
 
-This is the procedural macro implementation crate for the `wstr-literal`.
+# wstr-literal_impl
 
-This crate provides the internal macro implementation and is not intended to be used directly. For usage instructions and examples, please refer to the [`wstr-literal`](https://docs.rs/wstr-literal) documentation.
+This is procedural macro implementation crate for [`wstr-literal`](https://crates.io/crates/wstr-literal).
+
+This crate provides the internal macro implementation and is not intended to be used directly. For usage instructions and examples, please refer to the [`wstr-literal` documentation](https://docs.rs/wstr-literal).
 
 ## Note
 
