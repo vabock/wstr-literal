@@ -23,10 +23,23 @@
 			"args": [
 				"--no-deps",
 				"--workspace",
-				"--open",
+				"--open"
 			],
 			"group": "build",
 			"label": "rust: cargo doc"
+		},
+		{
+			"type": "cargo",
+			"command": "clippy",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"args": [
+				"--workspace",
+				"--all-features"
+			],
+			"label": "rust: cargo clippy"
 		}
 	]
 }
