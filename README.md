@@ -1,10 +1,13 @@
 [![Crates.io][crates-badge]][crates-url]
 [![docs.rs][docs_rs-badge]][docs_rs-url]
+[![Github Actions][ci-badge]][ci-url]
 
 [crates-badge]: https://img.shields.io/crates/v/wstr-literal.svg
 [crates-url]: https://crates.io/crates/wstr-literal
 [docs_rs-badge]: https://img.shields.io/docsrs/wstr-literal.svg
 [docs_rs-url]: https://docs.rs/wstr-literal
+[ci-badge]: https://github.com/vabock/wstr-literal/actions/workflows/test.yml/badge.svg?branch=main
+[ci-url]: https://github.com/vabock/wstr-literal/actions?query=branch%3Amain
 
 Procedural macros for building UTF-16 null-terminated string arrays for Windows FFI and similar APIs at compile time.
 
