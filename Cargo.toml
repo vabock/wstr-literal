@@ -10,6 +10,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/vabock/wstr-literal"
 documentation = "https://docs.rs/wstr-literal"
 readme = "README.md"
+exclude = ["/.github", "/.vscode"]
 
 [dependencies]
 proc-macro2 = "1"
