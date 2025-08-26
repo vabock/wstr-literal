@@ -8,7 +8,7 @@ keywords = ["const", "static", "utf-16", "wchar", "macro"]
 categories = ["encoding", "os::windows-apis"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/vabock/wstr-literal"
-documentation = "https://docs.rs/wstr-literal"
+documentation = "https://docs.rs/wstr-literal_impl"
 readme = "README.md"
 
 [dependencies]
