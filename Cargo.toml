@@ -1,7 +1,7 @@
 [package]
 name = "wstr-literal"
 description = "Proc macros for building UTF-16 null-terminated arrays at compile time."
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Vabock <vabock@gmail.com>"]
 keywords = ["const", "static", "utf-16", "wchar", "macro"]
@@ -15,7 +15,7 @@ readme = "README.md"
 proc-macro2 = "1"
 quote = "1"
 syn = "2"
-wstr-literal_impl = { version = "0.1.0", path = "wstr-literal_impl" }
+wstr-literal_impl = { version = "0.1.1", path = "wstr-literal_impl" }
 
 [lib]
 proc-macro = true
