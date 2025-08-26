@@ -15,10 +15,10 @@ readme = "README.md"
 proc-macro2 = "1"
 quote = "1"
 syn = "2"
-wstr-literal_impl = { version = "0.1.1", path = "wstr-literal_impl" }
+wstr-literal_impl = { version = "0.1.1", path = "impl" }
 
 [lib]
 proc-macro = true
 
 [workspace]
-members = ["wstr-literal_impl"]
+members = ["impl"]
