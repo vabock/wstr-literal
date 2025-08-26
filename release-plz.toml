@@ -1,0 +1,10 @@
+[[package]]
+name = "wstr-literal"
+git_release_name = "v{{ version }}"
+git_tag_name = "v{{ version }}"
+
+[[package]]
+name = "wstr-literal_impl"
+git_release_enable = false
+git_tag_name = "impl-v{{ version }}"
+#git_release_name = "impl-v{{ version }}"
