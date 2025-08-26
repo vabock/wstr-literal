@@ -4,8 +4,7 @@ use std::iter::once;
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
-    bracketed, parse::Parse, token, Attribute, Ident, LitInt, LitStr, StaticMutability, Token,
-    Visibility,
+    bracketed, parse::Parse, Attribute, Ident, LitInt, LitStr, StaticMutability, Token, Visibility,
 };
 
 pub fn wstr_impl(input: TokenStream) -> syn::Result<TokenStream> {
@@ -53,42 +52,33 @@ impl Parse for WstrArgs {
     }
 }
 
-#[allow(dead_code)]
-enum WstrArraySize {
-    Fixed(LitInt),
-    Placeholder(Token![_]),
-}
-
-impl Parse for WstrArraySize {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let lookahead = input.lookahead1();
-        if lookahead.peek(LitInt) {
-            Ok(WstrArraySize::Fixed(input.parse()?))
-        } else if lookahead.peek(Token![_]) {
-            Ok(WstrArraySize::Placeholder(input.parse()?))
-        } else {
-            Err(lookahead.error())
-        }
+fn parse_array_size(input: syn::parse::ParseStream) -> syn::Result<Option<LitInt>> {
+    let lookahead = input.lookahead1();
+    if lookahead.peek(LitInt) {
+        Ok(Some(input.parse()?))
+    } else if lookahead.peek(Token![_]) {
+        let _ = input.parse::<Token![_]>()?;
+        Ok(None)
+    } else {
+        Err(lookahead.error())
     }
 }
 
-#[allow(dead_code)]
 struct WstrTypeArray {
-    _bracket_token: token::Bracket,
     elem: Ident,
-    _semi_token: Token![;],
-    size: WstrArraySize,
+    size: Option<LitInt>,
 }
 
 impl Parse for WstrTypeArray {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let content;
-        Ok(Self {
-            _bracket_token: bracketed!(content in input),
-            elem: content.parse()?,
-            _semi_token: content.parse()?,
-            size: content.parse()?,
-        })
+
+        let _ = bracketed!(content in input);
+        let elem: Ident = content.parse()?;
+        let _ = content.parse::<Token![;]>()?;
+        let size = parse_array_size(&content)?;
+
+        Ok(Self { elem, size })
     }
 }
 
@@ -119,33 +109,37 @@ impl ToTokens for WstrConstOrStatic {
     }
 }
 
-#[allow(dead_code)]
 struct WstrDeclaration {
     attrs: Vec<Attribute>,
     vis: Visibility,
     const_or_static: WstrConstOrStatic,
     mutability: StaticMutability,
     ident: Ident,
-    _colon_token: Token![:],
     ty: WstrTypeArray,
-    _eq_token: Token![=],
     lit: LitStr,
-    _semi_token: Token![;],
 }
 
 impl Parse for WstrDeclaration {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let attrs = input.call(Attribute::parse_outer)?;
+        let vis: Visibility = input.parse()?;
+        let const_or_static: WstrConstOrStatic = input.parse()?;
+        let mutability: StaticMutability = input.parse()?;
+        let ident: Ident = input.parse()?;
+        let _ = input.parse::<Token![:]>()?;
+        let ty: WstrTypeArray = input.parse()?;
+        let _ = input.parse::<Token![=]>()?;
+        let lit: LitStr = input.parse()?;
+        let _ = input.parse::<Token![;]>()?;
+
         Ok(Self {
-            attrs: input.call(Attribute::parse_outer)?,
-            vis: input.parse()?,
-            const_or_static: input.parse()?,
-            mutability: input.parse()?,
-            ident: input.parse()?,
-            _colon_token: input.parse()?,
-            ty: input.parse()?,
-            _eq_token: input.parse()?,
-            lit: input.parse()?,
-            _semi_token: input.parse()?,
+            attrs,
+            vis,
+            const_or_static,
+            mutability,
+            ident,
+            ty,
+            lit,
         })
     }
 }
@@ -161,13 +155,12 @@ pub fn wstr_literal_impl(input: TokenStream) -> syn::Result<TokenStream> {
         ident,
         ty,
         lit,
-        ..
     } = input;
-    let WstrTypeArray { elem, size, .. } = ty;
+    let WstrTypeArray { elem, size } = ty;
 
     let mut v: Vec<_> = lit.value().encode_utf16().chain(once(0)).collect();
     let arr_len = match size {
-        WstrArraySize::Fixed(len) => {
+        Some(len) => {
             let sz: usize = len.base10_parse()?;
             if sz < v.len() {
                 return Err(syn::Error::new_spanned(
@@ -178,7 +171,7 @@ pub fn wstr_literal_impl(input: TokenStream) -> syn::Result<TokenStream> {
             v.resize(sz, 0);
             sz
         }
-        WstrArraySize::Placeholder(_) => v.len(),
+        None => v.len(),
     };
 
     let arr = quote! {
@@ -384,14 +377,14 @@ mod tests {
     fn test_wstr_typearray() {
         let output = syn::parse2::<WstrTypeArray>(quote!([u16; _])).unwrap();
         assert_eq!(output.elem, Ident::new("u16", Span::call_site()));
-        assert!(matches!(output.size, WstrArraySize::Placeholder(_)));
+        assert!(matches!(output.size, None));
 
         let output = syn::parse2::<WstrTypeArray>(quote!([u16; 0x10])).unwrap();
         assert_eq!(output.elem, Ident::new("u16", Span::call_site()));
-        assert!(matches!(output.size, WstrArraySize::Fixed(_)));
+        assert!(matches!(output.size, Some(_)));
         assert_eq!(
             match output.size {
-                WstrArraySize::Fixed(size) => size.base10_parse::<usize>().unwrap(),
+                Some(size) => size.base10_parse::<usize>().unwrap(),
                 _ => unreachable!(),
             },
             0x10
