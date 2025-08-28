@@ -75,7 +75,7 @@ use windows::core::PCWSTR;
 #[wstr_literal]
 static APP_NAME: [u16; _] = "MyApp";
 
-let pcwstr = PCWSTR(APP_NAME.as_ptr());
+let pcwstr = PCWSTR::from_raw(APP_NAME.as_ptr());
 // pass `pcwstr` to Windows APIs that expect a wide string
 ```
 
