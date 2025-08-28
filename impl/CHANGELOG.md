@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/vabock/wstr-literal/compare/impl-v0.1.1...impl-v0.1.2) - 2025-08-28
+
+### Other
+
+- rename tags
+
 ## [0.1.1](https://github.com/vabock/wstr-literal/compare/impl-v0.1.0...impl-v0.1.1) - 2025-08-26
 
 ### Other
